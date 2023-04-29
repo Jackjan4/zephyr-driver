@@ -1,0 +1,8 @@
+name: ssd1327
+
+build:
+  settings:
+    dts_root: zephyr
+  cmake: zephyr
+  kconfig: zephyr/Kconfig
+  

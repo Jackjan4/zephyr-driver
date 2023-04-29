@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SHOCKBURST
+	bool "Enable support for ShockBurst (not Enhanced)"
+	default n
+	help
+	  Enable Shockburst functionality.
+
+if SHOCKBURST
+
+config SHOCKBURST_MAX_PAYLOAD_LENGTH
+	int "Maximum payload size"
+	default 32
+	range 1 252
+	help
+	  The maximum size of the payload.
+
+config SHOCKBURST_RADIO_IRQ_PRIORITY
+	int "Radio interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 1
+
+endif # NRF_SHOCKBURST

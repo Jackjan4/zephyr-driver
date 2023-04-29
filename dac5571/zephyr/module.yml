@@ -1,0 +1,8 @@
+name: dac5571
+
+build:
+  settings:
+    dts_root: zephyr
+  cmake: zephyr
+  kconfig: zephyr/Kconfig
+  

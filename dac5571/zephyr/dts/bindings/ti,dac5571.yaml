@@ -1,0 +1,24 @@
+description: TI DAC5571 8-bit single-channel DAC
+
+compatible: "ti,dac5571"
+
+include: [dac-controller.yaml, i2c-device.yaml]
+
+properties:
+    "#io-channel-cells":
+      const: 1
+
+    power_down_mode:
+      type: array
+      required: true
+      description: |
+        Power-down mode select.
+        0 - normal mode
+        1 - Vout is loaded with 1 kOhm resistor to ground
+        2 - Vout is loaded 100 kOhm resistor to ground
+        3 - Vout is high impedence
+        Note: with values bigger than 0 most of channel circuits are powered off
+        Note: array entries correspond to the successive channels
+
+io-channel-cells:
+    - output

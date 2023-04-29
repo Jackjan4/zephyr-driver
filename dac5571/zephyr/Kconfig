@@ -1,0 +1,15 @@
+menuconfig DAC5571
+	bool "Enable support for DAC5571 8-Bit I2C DAC"
+	depends on I2C
+	help
+		Enable driver for DAC5571 DAC.
+
+if DAC5571
+
+config DAC_DAC5571_INIT_PRIORITY
+	int "Init priority"
+	default 80
+	help
+	  TI DAC5571 DAC device driver initialization priority.
+
+endif
