@@ -1,0 +1,9 @@
+menuconfig SSD1306A
+	bool "Enable support for the advanced SSD1306 OLED Display"
+	depends on I2C || SPI
+	help
+		Enable driver for advanced SSD1306 display driver.
+
+if SSD1327
+
+endif

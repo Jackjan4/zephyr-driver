@@ -1,0 +1,14 @@
+# Copyright (c) 2020, Marco Peter
+# SPDX-License-Identifier: Apache-2.0
+
+description: SSD13206 128x128 dot-matrix display controller on I2C bus
+
+compatible: "solomon,ssd1306a"
+
+include: ["solomon,ssd1306a-common.yaml", "i2c-device.yaml"]
+
+properties:
+    data_cmd-gpios:
+      type: phandle-array
+      required: true
+      description: D/C# pin.
