@@ -72,15 +72,13 @@
 
 #define SSD1306_SET_DISPLAY_OFFSET		0xd3 /* double byte command */
 
-#define SSD1306_SET_PADS_HW_CONFIG		0xda /* double byte command */
-#define SSD1306_SET_PADS_HW_SEQUENTIAL		0x02
-#define SSD1306_SET_PADS_HW_ALTERNATIVE		0x12
+#define SSD1306_SET_COM_PINS_HW_CONFIG		0xda /* double byte command */
 
 
 /*
  * Timing and Driving Scheme Setting Command Table
  */
-#define SSD1306_SET_CLOCK_DIV_RATIO		0xd5 /* double byte command */
+#define SSD1306_SET_CLOCK_DIV_OSC_FREQ		0xd5 /* double byte command */
 
 #define SSD1306_SET_CHARGE_PERIOD		0xd9 /* double byte command */
 
