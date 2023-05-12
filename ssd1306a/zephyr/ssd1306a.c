@@ -1,23 +1,22 @@
 #define DT_DRV_COMPAT solomon_ssd1306a
 
-#define module ssd1306a
+
 
 #include "ssd1306a.h"
 
-// Zephyr header
+
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(ssd1306a, CONFIG_DISPLAY_LOG_LEVEL);
+
+#include <string.h>
 #include <zephyr/device.h>
+#include <zephyr/init.h>
 #include <zephyr/drivers/display.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/spi.h>
-#ifdef CONFIG_LOG
-#include <zephyr/logging/log.h>
-#endif
-
-// Logging
-#ifdef CONFIG_LOG
-LOG_MODULE_REGISTER(MODULE, CONFIG_DISPLAY_LOG_LEVEL);
-#endif
+#include <zephyr/kernel.h>
 
 
 

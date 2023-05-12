@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2018 Phytec Messtechnik GmbH
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
 #ifndef __SSD1306A_H__
 #define __SSD1306A_H__
 
@@ -18,8 +25,8 @@
  */
 #define SSD1306_SET_CONTRAST_CTRL		0x81 /* double byte command */
 
-#define SSD1306_SET_ENTIRE_DISPLAY_OFF		0xa4
-#define SSD1306_SET_ENTIRE_DISPLAY_ON		0xa5
+#define SSD1306_DISABLE_ENTIRE_DISPLAY_ON		0xa4
+#define SSD1306_ENABLE_ENTIRE_DISPLAY_ON		0xa5
 
 #define SSD1306_SET_NORMAL_DISPLAY		0xa6
 #define SSD1306_SET_REVERSE_DISPLAY		0xa7
@@ -84,9 +91,9 @@
 /*
  * Charge Pump Command Table
  */
-#define SSD1306_SET_CHARGE_PUMP_ON		0x8d /* double byte command */
-#define SSD1306_SET_CHARGE_PUMP_ON_DISABLED	0x10
-#define SSD1306_SET_CHARGE_PUMP_ON_ENABLED	0x14
+#define SSD1306_SET_CHARGE_PUMP_SETTING		0x8d /* double byte command */
+#define SSD1306_DISABLE_CHARGE_PUMP	0x10
+#define SSD1306_ENABLE_CHARGE_PUMP	0x14
 
 #define SH1106_SET_DCDC_MODE			0xad /* double byte command */
 #define SH1106_SET_DCDC_DISABLED		0x8a
