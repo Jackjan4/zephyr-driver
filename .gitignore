@@ -1,0 +1,4 @@
+.vscode/
+build_nrf_dk/
+CMakePresets.json
+build*/
