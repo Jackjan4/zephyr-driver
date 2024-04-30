@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2018 Phytec Messtechnik GmbH
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
-
 #ifndef __SSD1306A_H__
 #define __SSD1306A_H__
 

@@ -1,7 +1,4 @@
-# Copyright (c) 2020, Marco Peter
-# SPDX-License-Identifier: Apache-2.0
-
-description: SSD1306A 128x128 dot-matrix display controller on I2C bus
+description: Advanced SSD1306 128x128 dot-matrix display controller on I2C bus
 
 compatible: "solomon,ssd1306a"
 

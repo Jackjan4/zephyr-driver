@@ -9,41 +9,41 @@ properties:
   multiplex-ratio:
     type: int
     required: true
-    description: Multiplex Ratio
+    description: TODO
 
   precharge-period:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: The period length of the precharge time
 
   clock-div-osc-frequency:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: TODO
 
   display-start-line:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: TODO
 
   com-pins-config:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: TODO
 
   memory-addressing-mode:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: TODO
 
   default-contrast:
     type: int
     required: true
-    description: Duration of the pre-charge period
+    description: The contrast value to which the display should default to
 
   charge-pump-enable:
     type: boolean
-    description: Last column address is mapped to first segment
+    description: Whether to enable the integrated charge pump of the OLED driver
 
   segment-remap:
     type: boolean
