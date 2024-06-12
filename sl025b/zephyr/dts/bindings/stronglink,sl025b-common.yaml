@@ -1,0 +1,62 @@
+include: display-controller.yaml
+
+properties:
+  display-offset:
+    type: int
+    required: true
+    description: mapping of the display start line to one of COM0 .. COM63
+
+  multiplex-ratio:
+    type: int
+    required: true
+    description: TODO
+
+  precharge-period:
+    type: int
+    required: true
+    description: The period length of the precharge time
+
+  clock-div-osc-frequency:
+    type: int
+    required: true
+    description: TODO
+
+  display-start-line:
+    type: int
+    required: true
+    description: TODO
+
+  com-pins-config:
+    type: int
+    required: true
+    description: TODO
+
+  memory-addressing-mode:
+    type: int
+    required: true
+    description: TODO
+
+  default-contrast:
+    type: int
+    required: true
+    description: The contrast value to which the display should default to
+
+  charge-pump-enable:
+    type: boolean
+    description: Whether to enable the integrated charge pump of the OLED driver
+
+  segment-remap:
+    type: boolean
+    description: Last column address is mapped to first segment
+
+  com-invert-direction:
+    type: boolean
+    description: Scan direction is from last COM output to first COM output
+
+  reset-gpios:
+    type: phandle-array
+    description: RESET pin.
+
+      The RESET pin of SSD1306 is active low.
+      If connected directly the MCU pin should be configured
+      as active low.

@@ -1,0 +1,9 @@
+menuconfig SL025B
+	bool "Enable support for Stronglink SL025B RFID module"
+	depends on SERIAL
+	help
+		Enable driver for SL025B RFID.
+
+if SL025B
+
+endif
