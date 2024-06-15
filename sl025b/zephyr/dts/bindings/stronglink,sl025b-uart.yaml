@@ -2,4 +2,4 @@ description: Stronglink SL025B RFID Module on Serial
 
 compatible: "stronglink,sl025b"
 
-include: ["stronglink,sl025b-common.yaml", "uart-device.yaml"]
+include: "uart-device.yaml"

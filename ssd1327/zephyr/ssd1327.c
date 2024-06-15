@@ -490,7 +490,11 @@ static struct display_driver_api ssd1327_driver_api = {
     .set_orientation = ssd1327_set_orientation,
 };
 
-DEVICE_DT_INST_DEFINE(0, ssd1327_init, NULL,
-                      &ssd1327_driver, &ssd1327_config,
-                      POST_KERNEL, CONFIG_DISPLAY_INIT_PRIORITY,
-                      &ssd1327_driver_api);
+DEVICE_DT_INST_DEFINE(0, 
+					ssd1327_init, 
+					NULL,
+                    &ssd1327_driver, 
+					&ssd1327_config,
+                    POST_KERNEL, 
+					CONFIG_DISPLAY_INIT_PRIORITY,
+                    &ssd1327_driver_api);

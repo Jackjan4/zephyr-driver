@@ -1,107 +1,76 @@
-#ifndef __SSD1306A_H__
-#define __SSD1306A_H__
+#include <zephyr.h>
+#include <device.h>
 
-/* All following bytes will contain commands */
-#define SSD1306_CONTROL_ALL_BYTES_CMD		0x00
-/* All following bytes will contain data */
-#define SSD1306_CONTROL_ALL_BYTES_DATA		0x40
-/* The next byte will contain a command */
-#define SSD1306_CONTROL_BYTE_CMD		0x80
-/* The next byte will contain data */
-#define SSD1306_CONTROL_BYTE_DATA		0xc0
-#define SSD1306_READ_STATUS_MASK		0xc0
-#define SSD1306_READ_STATUS_BUSY		0x80
-#define SSD1306_READ_STATUS_ON			0x40
+#ifndef __SL025B_H__
+#define __SL025B_H__
 
-/*
- * Fundamental Command Table
- */
-#define SSD1306_SET_CONTRAST_CTRL		0x81 /* double byte command */
+// Preambles
+#define SL025B_PREAMBLE_HOST                0xBA
+#define SL025B_PREAMBLE_SL025B              0xBD
 
-#define SSD1306_DISABLE_ENTIRE_DISPLAY_ON		0xa4
-#define SSD1306_ENABLE_ENTIRE_DISPLAY_ON		0xa5
+// Status Codes
+#define SL025B_STATUS_OP_SUCCEEDED          0x00
+#define SL025B_STATUS_NO_TAG                0x01
 
-#define SSD1306_SET_NORMAL_DISPLAY		0xa6
-#define SSD1306_SET_REVERSE_DISPLAY		0xa7
+#define SL025B_STATUS_CHECKSUM_ERROR        0xF0
 
-#define SSD1306_DISPLAY_OFF			0xae
-#define SSD1306_DISPLAY_ON			0xaf
-
-/*
- * Addressing Setting Command Table
- */
-#define SSD1306_SET_LOWER_COL_ADDRESS		0x00
-#define SSD1306_SET_LOWER_COL_ADDRESS_MASK	0x0f
-
-#define SSD1306_SET_HIGHER_COL_ADDRESS		0x10
-#define SSD1306_SET_HIGHER_COL_ADDRESS_MASK	0x0f
-
-#define SSD1306_SET_MEM_ADDRESSING_MODE		0x20 /* double byte command */
-#define SSD1306_SET_MEM_ADDRESSING_HORIZONTAL	0x00
-#define SSD1306_SET_MEM_ADDRESSING_VERTICAL	0x01
-#define SSD1306_SET_MEM_ADDRESSING_PAGE		0x02
-
-#define SSD1306_SET_COLUMN_ADDRESS		0x21 /* triple byte command */
-
-#define SSD1306_SET_PAGE_ADDRESS		0x22 /* triple byte command */
-
-#define SSD1306_SET_PAGE_START_ADDRESS		0xb0
-#define SSD1306_SET_PAGE_START_ADDRESS_MASK	0x07
+// Commands
+#define SL025B_COMMAND_SELECT_MIFARE_CARD   0x01
+#define SL025B_COMMAND_LOGIN_TO_SECTOR      0x02
+#define SL025B_COMMAND_READ_DATA_BLOCK      0x03
+#define SL025B_COMMAND_WRITE_DATA_BLOCK     0x04
+#define SL025B_COMMAND_READ_VALUE_BLOCK     0x05
+#define SL025B_COMMAND_INIT_VALUE_BLOCK     0x06
+// ... There are more commands here but we don't need them
+#define SL025B_COMMAND_MANAGE_RED_LED       0x40
+#define SL025B_COMMAND_GET_FW_VERSION       0xF0
 
 
-/*
- * Hardware Configuration Command Table
- */
-#define SSD1306_SET_START_LINE			0x40
-#define SSD1306_SET_START_LINE_MASK		0x3f
 
-#define SSD1306_SET_SEGMENT_MAP_NORMAL		0xa0
-#define SSD1306_SET_SEGMENT_MAP_REMAPED		0xa1
+typedef int (*sl025b_select_mifare_card_t)(const struct device *dev, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout);
 
-#define SSD1306_SET_MULTIPLEX_RATIO		0xa8 /* double byte command */
+typedef int (*sl025b_login_to_sector_t)(const struct device *dev);
 
-#define SSD1306_SET_COM_OUTPUT_SCAN_NORMAL	0xc0
-#define SSD1306_SET_COM_OUTPUT_SCAN_FLIPPED	0xc8
+typedef int (*sl025b_read_data_block_t)(const struct device *dev);
 
-#define SSD1306_SET_DISPLAY_OFFSET		0xd3 /* double byte command */
+// ...
 
-#define SSD1306_SET_COM_PINS_HW_CONFIG		0xda /* double byte command */
+typedef int (*sl025b_manage_red_led_t)(const struct device *dev, uint8_t value, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout);
+
+typedef int (*sl025b_get_fw_version_t)(const struct device *dev, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout);
 
 
-/*
- * Timing and Driving Scheme Setting Command Table
- */
-#define SSD1306_SET_CLOCK_DIV_OSC_FREQ		0xd5 /* double byte command */
 
-#define SSD1306_SET_CHARGE_PERIOD		0xd9 /* double byte command */
+struct sl025b_api {
+    sl025b_select_mifare_card_t select_mifare_card;
+    sl025b_login_to_sector_t login_to_sector;
+    sl025b_read_data_block_t read_data_block;
+    sl025b_manage_red_led_t manage_red_led;
+    sl025b_get_fw_version_t get_fw_version;
+};
 
-#define SSD1306_SET_VCOM_DESELECT_LEVEL		0xdb /* double byte command */
+struct sl025b_response {
+    uint8_t preamble;
+	uint8_t len;
+    uint8_t command;
+    uint8_t status;
+    uint8_t checksum;
+};
 
-#define SSD1306_NOP				0xe3
 
-/*
- * Charge Pump Command Table
- */
-#define SSD1306_SET_CHARGE_PUMP_SETTING		0x8d /* double byte command */
-#define SSD1306_DISABLE_CHARGE_PUMP	0x10
-#define SSD1306_ENABLE_CHARGE_PUMP	0x14
+static inline int sl025b_select_mifare_card(const struct device *dev, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout) {
+    struct sl025b_api *api = (struct sl025b_api *)dev->api;
+    return api->select_mifare_card(dev, response, data, timeout);
+}
 
-#define SH1106_SET_DCDC_MODE			0xad /* double byte command */
-#define SH1106_SET_DCDC_DISABLED		0x8a
-#define SH1106_SET_DCDC_ENABLED			0x8b
+static inline int sl025b_manage_red_led(const struct device *dev, uint8_t value, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout) {
+    struct sl025b_api *api = (struct sl025b_api *)dev->api;
+    return api->manage_red_led(dev, value, response, data, timeout);
+}
 
-#define SSD1306_SET_PUMP_VOLTAGE_64		0x30
-#define SSD1306_SET_PUMP_VOLTAGE_74		0x31
-#define SSD1306_SET_PUMP_VOLTAGE_80		0x32
-#define SSD1306_SET_PUMP_VOLTAGE_90		0x33
-
-/*
- * Read modify write
- */
-#define SSD1306_READ_MODIFY_WRITE_START		0xe0
-#define SSD1306_READ_MODIFY_WRITE_END		0xee
-
-/* time constants in ms */
-#define SSD1306_RESET_DELAY			1
+static inline int sl025b_get_fw_version(const struct device *dev, struct sl025b_response* response, uint8_t* data, k_timeout_t timeout) {
+    struct sl025b_api *api = (struct sl025b_api *)dev->api;
+    return api->get_fw_version(dev, response, data, timeout);
+}
 
 #endif
