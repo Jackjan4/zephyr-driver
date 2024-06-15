@@ -92,11 +92,9 @@ void serial_cb(const struct device *dev, void *user_data) {
                     rx_buffer_pos++;
                     msg_pending--;
 
-                    if (msg_pending == 0) {
-                        k_msgq_put(&uart_msgq, &uart_rx_buf, K_MSEC(10));
-
-                        // Reset callback state
-                        cb_state = CB_STATE_START;
+                    if (msg_pending <= 0) {
+                        k_msgq_put(&uart_msgq, &uart_rx_buf, K_NO_WAIT);
+                        cb_state = CB_STATE_START; // Reset callback state machine
                     }
                 }
             }
