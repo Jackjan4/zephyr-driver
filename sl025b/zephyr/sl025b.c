@@ -94,7 +94,7 @@ void serial_cb(const struct device *dev, void *user_data) {
 
                     if (msg_pending <= 0) {
                         k_msgq_put(&uart_msgq, &uart_rx_buf, K_NO_WAIT);
-                        cb_state = CB_STATE_START; // Reset callback state machine
+                        cb_state = CB_STATE_START;  // Reset callback state machine
                     }
                 }
             }
@@ -138,7 +138,7 @@ static void write_command(const struct device *dev, uint8_t command, uint8_t *da
     }
 }
 
-static int receive_response(struct sl025b_response *response, uint8_t *data, k_timeout_t timeout) {
+static int receive_response(struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
     int err = 0;
 
     uint8_t msg_buffer[MSG_SIZE];
@@ -158,24 +158,84 @@ static int receive_response(struct sl025b_response *response, uint8_t *data, k_t
     }
 
     // Copy data
-    if (response->len > 3) {
+    // Add sanity check to not add to much data
+    if (response->len > 3 && buffer_size > 0) {
         for (int i = 0; i < response->len - 1; i++) {
-            data[i] = msg_buffer[4 + i];
+            data_buffer[i] = msg_buffer[4 + i];
         }
     }
     return err;
 }
 
-static void select_mifare_card(const struct device *dev, struct sl025b_response *response, uint8_t *data, k_timeout_t timeout) {
+
+/// @brief 
+/// @param dev 
+/// @param response 
+/// @param data 
+/// @param timeout 
+static void select_mifare_card(const struct device *dev, struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
     int err = 0;
     struct sl025b_config *config = (struct sl025b_config *)dev->config;
 
     write_command(dev, SL025B_COMMAND_SELECT_MIFARE_CARD, NULL, 0);
-    err = receive_response(response, data, timeout);
+    err = receive_response(response, data_buffer, buffer_size, timeout);
     return err;
 }
 
-static int manage_red_led(const struct device *dev, uint8_t value, struct sl025b_response *response, uint8_t *data, k_timeout_t timeout) {
+static void login_to_sector(const struct device *dev, uint8_t sector, uint8_t key_type, uint8_t key[6], struct sl025b_response *response, k_timeout_t timeout) {
+    int err = 0;
+    struct sl025b_config *config = (struct sl025b_config *)dev->config;
+
+    uint8_t input_data[8];
+    input_data[0] = sector;
+    input_data[1] = key_type;
+    input_data[2] = key[0];
+    input_data[3] = key[1];
+    input_data[4] = key[2];
+    input_data[5] = key[3];
+    input_data[6] = key[4];
+    input_data[7] = key[5];
+    write_command(dev, SL025B_COMMAND_LOGIN_TO_SECTOR, &input_data, sizeof(input_data) / sizeof(uint8_t));
+    err = receive_response(response, NULL, 0, timeout);
+    return err;
+}
+
+static int read_data_block(const struct device *dev, uint8_t block, struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
+    int err = 0;
+    struct sl025b_config *config = (struct sl025b_config *)dev->config;
+
+    uint8_t input_data[1];
+    input_data[0] = block;
+    write_command(dev, SL025B_COMMAND_READ_DATA_BLOCK, &input_data, sizeof(input_data) / sizeof(uint8_t));
+    err = receive_response(response, data_buffer, buffer_size, timeout);
+    return err;
+}
+
+static int write_data_block(const struct device *dev, uint8_t block, uint8_t write_data[16], struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
+    int err = 0;
+    struct sl025b_config *config = (struct sl025b_config *)dev->config;
+
+    uint8_t input_data[17];
+    input_data[0] = block;
+    memcpy(&input_data[1], write_data, 16);
+    write_command(dev, SL025B_COMMAND_WRITE_DATA_BLOCK, &input_data, sizeof(input_data) / sizeof(uint8_t));
+    err = receive_response(response, data_buffer, buffer_size, timeout);
+    return err;
+}
+
+static int write_master_key_a(const struct device *dev, uint8_t sector, uint8_t key[6], struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
+    int err = 0;
+    struct sl025b_config *config = (struct sl025b_config *)dev->config;
+
+    uint8_t input_data[7];
+    input_data[0] = sector;
+    memcpy(&input_data[1], key, 6);
+    write_command(dev, SL025B_COMMAND_WRITE_MASTER_KEY_A, &input_data, sizeof(input_data) / sizeof(uint8_t));
+    err = receive_response(response, data_buffer, buffer_size, timeout);
+    return err;
+}
+
+static int manage_red_led(const struct device *dev, uint8_t value, struct sl025b_response *response, k_timeout_t timeout) {
     int err = 0;
     struct sl025b_config *config = (struct sl025b_config *)dev->config;
 
@@ -183,18 +243,20 @@ static int manage_red_led(const struct device *dev, uint8_t value, struct sl025b
     input_data[0] = value;
 
     write_command(dev, SL025B_COMMAND_MANAGE_RED_LED, &input_data, 1);
-    err = receive_response(response, data, timeout);
+    err = receive_response(response, NULL, 0, timeout);
     return err;
 }
 
-static int get_fw_version(const struct device *dev, struct sl025b_response *response, uint8_t *data, k_timeout_t timeout) {
+static int get_fw_version(const struct device *dev, struct sl025b_response *response, uint8_t *data_buffer, uint8_t buffer_size, k_timeout_t timeout) {
     int err = 0;
     struct sl025b_config *config = (struct sl025b_config *)dev->config;
 
     write_command(dev, SL025B_COMMAND_GET_FW_VERSION, NULL, 0);
-    err = receive_response(response, data, timeout);
+    err = receive_response(response, data_buffer, buffer_size, timeout);
     return err;
 }
+
+
 
 /**
  * @brief Initializes Stronglink SL025B
@@ -222,6 +284,10 @@ static int init_sl025b(const struct device *dev) {
 
 static struct sl025b_api sl025b_api = {
     .select_mifare_card = select_mifare_card,
+    .login_to_sector = login_to_sector,
+    .read_data_block = read_data_block,
+    .write_data_block = write_data_block,
+    .write_master_key_a = write_master_key_a,
     .manage_red_led = manage_red_led,
     .get_fw_version = get_fw_version};
 
